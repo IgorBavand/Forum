@@ -3,6 +3,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const connection = require("./database/database"); 
 const Pergunta = require("./database/Pergunta"); 
+const res = require("express/lib/response");
 
 
 connection
@@ -30,13 +31,22 @@ app.get("/", (req, res)=>{
     }); 
 });
 
-app.get("/pergunta/:id", ()=>{
+app.get("/pergunta/:id", (req, res)=>{
     var id = req.params.id;
     Pergunta.findOne({
         where:{
             id: id
         }
-    });
+    }).then(pergunta => {
+        if(pergunta != undefined){
+            res.render("pergunta",{
+                pergunta: pergunta
+            }
+            );
+        }else{
+            res.redirect("/");
+        }
+    })
 });
 
 app.get("/perguntar", (req, res)=>{
